@@ -13,8 +13,26 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-        'App\Events\SomeEvent' => [
-            'App\Listeners\EventListener',
+        'App\Events\BatchAssignedToUser' => [
+            'App\Listeners\AssignBatchToUser',
+        ],
+        'App\Events\UserRestored' => [
+            'App\Listeners\CreateUserRestored',
+            'App\Listeners\SendUserRestoredNotification',
+        ],
+        'App\Events\ArticleUpdated' => [
+            'App\Listeners\CreateArticleUpdated',
+            'App\Listeners\SendBatchCompletedNotification',
+        ],
+        'App\Events\BatchUpdated' => [
+            'App\Listeners\CreateBatchUpdated',
+            'App\Listeners\SendBatchUpdatedNotification',
+        ],
+        'Illuminate\Auth\Events\Login' => [
+            'App\Listeners\LogSuccessfulLogin',
+        ],
+        'App\Events\BatchAvailableNotification' => [
+            'App\Listeners\SendBatchAvailableNotification',
         ],
     ];
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\User;
+use App\Role;
 use Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
@@ -28,7 +29,8 @@ class AuthController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/';
+    protected $redirectTo = '/dashboard';
+    protected $redirectAfterLogout = '/';
 
     /**
      * Create a new authentication controller instance.
@@ -37,7 +39,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware($this->guestMiddleware(), ['except' => 'logout']);
+        $this->middleware($this->guestMiddleware(), ['except' => ['logout', 'register', 'getRegister', 'postRegister']]);
     }
 
     /**
@@ -63,10 +65,21 @@ class AuthController extends Controller
      */
     protected function create(array $data)
     {
-        return User::create([
+        $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
         ]);
+        
+        $user->attachRole(Role::where('name', 'general-user')->first());
+        
+        return $user;
+    }
+    
+    public function getLogout()
+    {
+        $this->auth->logout();
+    
+        return redirect('login');
     }
 }
