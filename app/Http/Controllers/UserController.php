@@ -171,6 +171,35 @@ class UserController extends Controller
         return redirect()->route('user.index')->with('success', 'User Activated.');
     }
     
+    public function resetUserPassword($id)
+    {
+        $user = User::find($id);
+        
+        if (!empty($user))
+        {
+            return view('user.password_reset_user', compact('user'));
+        }
+        
+        return redirect()->back()->with('fail', 'User not found.');
+        
+    }
+    
+    public function postResetUserPassword(Request $request, $id)
+    {
+        $user = User::find($id);
+        
+        if (!empty($user))
+        {
+            $user->password = bcrypt($request->new_password);
+            $user->save();
+            
+            return redirect()->route('user.index')->with('success', 'Password updated!');
+        }
+        
+        return redirect()->back()->with('fail', 'User not found.');
+        
+    }
+    
     public function sendResetEmail($id)
     {
         $user = User::find($id);

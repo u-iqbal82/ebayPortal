@@ -113,6 +113,7 @@
                     <th>Saved</th>
                     <th>Completed</th>
                     <th>Quality Checked</th>
+                    <th>Review</th>
                     <th>Actions</th>
                 </tr>
                 </thead>
@@ -132,10 +133,11 @@
                         
                         $saved = count($batch->articles->where('status', 'Saved'));
                         $completed = count($batch->articles->where('status', 'Completed'));
+                        $review = count($batch->articles->where('status', 'Review'));
                         $qcChecked = count($batch->articles->where('status', 'QualityChecked'));
                         
-                        $unAssigned = $totalArticles - ($assigned + $saved + $completed + $qcChecked);
-                        $assigned = $assigned + $saved + $completed  + $qcChecked;
+                        $unAssigned = $totalArticles - ($assigned + $saved + $completed + $qcChecked + $review);
+                        $assigned = $assigned + $saved + $completed  + $qcChecked + $review;
                         
                         $markAsS = '';
                         if ($batch->status == 'Submitted' || $batch->status == 'QCInProcess')
@@ -158,6 +160,7 @@
                     <td>{{ $saved }} {!! $markAsS !!}</td>
                     <td>{{ $completed }}</td>
                     <td>{{ $qcChecked }}</td>
+                    <td>{{ $review }}</td>
                     <td>
                         @permission('assign-users-to-batch')
                             @if (($assigned != $totalArticles) && ($batch->status == 'Created' || $batch->status = 'PartiallyAssigned'))
@@ -173,11 +176,11 @@
                             <a class="btn btn-sm btn-success" href="#" role="button" disabled="disabled">Batch Submitted for QC</a>
                         @endif
                         
-                        @if($batch->status == 'Final')
+                       
                             @permission('download-batch')
                                 <a class="btn btn-sm btn-success" href="batch/download/{{ $batch->id }}" role="button">Download</a>
                             @endpermission
-                        @endif
+                       
                         
                         @permission('view-batch')
                         <a class="btn btn-sm btn-info" href="/batch/view/{{ $batch->id }}/batch" role="button">View</a>

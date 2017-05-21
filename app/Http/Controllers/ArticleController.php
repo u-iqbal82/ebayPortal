@@ -8,6 +8,7 @@ use App\Http\Requests;
 use App\Article;
 use App\ArticleDetail;
 use App\ArticleComment;
+use App\CommentAnswers;
 use App\User;
 use App\Batch;
 use App\Events\BatchUpdated;
@@ -28,6 +29,41 @@ class ArticleController extends Controller
         return \Redirect::route('batch.view', ['id' => $article->batch_id])->with('success', 'Article status updated!');
     }
     
+    public function saveAnswer(Request $request)
+    {
+        $validationRules = [
+            'c_article_comment_id' => 'required|integer',
+            'article_answer' => 'required|min:10'
+        ];
+        
+        $this->validate($request, $validationRules);
+        
+        $articleComment = ArticleComment::find($request->c_article_comment_id);
+        
+        if (!empty($articleComment))
+        {
+            $answer = new CommentAnswers();
+            $answer->comment = $request->article_answer;
+            $answer->user_id = Auth::user()->id;
+            
+            $articleComment->answers()->save($answer);
+            
+            if (isset($request->flag_review))
+            {
+                $article = Article::find($request->article_id);
+                if (!empty($article))
+                {
+                    $article->status = 'Review';
+                    $article->save();
+                }
+            }
+            
+            return redirect()->back()->with('success', 'Comment added!');
+        }
+        
+        return redirect()->back()->with('fail', 'Unable to save the comment.');
+    }
+    
     public function saveComment(Request $request)
     {
         $validationRules = [
@@ -42,22 +78,22 @@ class ArticleController extends Controller
         $article = Article::find($request->c_article_id);
         $batch = Batch::find($article->batch_id);
         
-        if ($batch->status == 'QCInProcess' || $batch->status == 'Submitted')
-        {
+        //if ($batch->status == 'QCInProcess' || $batch->status == 'Submitted')
+        //{
             $comment = new ArticleComment();
             $comment->comment = $request->article_comment;
             $comment->user_id = Auth::user()->id;
             
-            $article->status = 'Saved';
+            $article->status = 'Review'; //Saved
             $article->save();
             
             $article->comments()->save($comment);
             
             
             return redirect()->back()->with('success', 'Comment added and Article moved to re-do stage.');
-        }
+        //}
 
-        return redirect()->back();
+        //return redirect()->back();
     }
     
     
@@ -142,7 +178,7 @@ class ArticleController extends Controller
         
         $article = Article::find($articleId);
         
-        if ($articleStatus == 'Assigned')
+        if ($articleStatus == 'Assigned' || $articleStatus == 'Review')
         {
             $articleStatus = 'Saved';
         }
@@ -181,6 +217,7 @@ class ArticleController extends Controller
     public function view($id)
     {
         $article = Article::find($id);
+        
         return view('article.view', compact('article'));
     }
     

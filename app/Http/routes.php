@@ -39,8 +39,10 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['middleware' => ['role:super-admin']], function() {
         Route::resource('role', 'RoleController');
         Route::resource('user', 'UserController');
-        Route::get('/admin', 'UserController@index');
+        Route::get('/admin', 'UserController@index')->name('user.index');
         Route::get('/reset/user/{id}', 'UserController@sendResetEmail');
+        Route::get('/reset/user/{id}/manual', 'UserController@resetUserPassword');
+         Route::post('/reset/user/{id}/manual', 'UserController@postResetUserPassword')->name('reset.passwordmanually');
         Route::get('/user/restore/{id}', [
             'uses' => 'UserController@restoreUser',
             'as' => 'user.restore'
@@ -109,6 +111,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/article/{article_id}/saved', 'ArticleController@saved')->name('article.saved');
     Route::post('/article/save', 'ArticleController@save')->name('article.save');
     Route::post('/article/comment/add', 'ArticleController@saveComment')->name('article.comment.add');
+    Route::post('/article/comment/add/answer', 'ArticleController@saveAnswer')->name('article.comment.add.answer');
 });    
 
 

@@ -234,6 +234,7 @@ class BatchController extends Controller
                     $usersInPlace[$user->id]['Assigned'] = 0;
                     $usersInPlace[$user->id]['UnAssigned'] = 0;
                     $usersInPlace[$user->id]['Completed'] = 0;
+                    $usersInPlace[$user->id]['Review'] = 0;
                     $usersInPlace[$user->id]['QualityChecked'] = 0;
                 }
                 

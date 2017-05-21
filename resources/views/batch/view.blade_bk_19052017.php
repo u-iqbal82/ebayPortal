@@ -68,6 +68,10 @@
         </div>
         
         <div class="row">
+            @if ($batch->status == 'PartiallyAssigned')
+                <div class="alert alert-danger">Batch is not Fully Assigned. Assign it fully to start working on it.</div>
+            @endif
+            
             @if(count($batch->articles) > 0)
                     
                     <table class="table table-condensed table-striped">
@@ -100,16 +104,26 @@
                                     <td>{{ $article->article_category }}</td>
                                     <td>{{ $article->user[0]->name }}</td>
                                     <td>{{ $article->status }}</td>
-                                    <td>    
-                                        @if (Auth::user()->hasRole(['admin', 'super-admin']))
-                                            <a class="btn btn-sm btn-success" href="/article/view/{{ $article->id }}" role="button">Open Article</a>
-                                            @permission('do-quality-check')
-                                                @if ($article->status == 'Completed')
-                                                    <a class="btn btn-sm btn-success" href="/article/view/{{ $article->id }}/qc" role="button">QC Completed</a>
+                                    <td>
+                                        @if ($batch->status == 'Submitted' || $batch->status == 'QCInProcess' || $batch->status == 'Final')
+                                            @if (Auth::user()->hasRole(['admin', 'super-admin']))
+                                                <a class="btn btn-sm btn-success" href="/article/view/{{ $article->id }}" role="button">Open Article</a>
+                                                <a class="btn btn-sm btn-info" href="/article/{{ $article->id }}/saved" role="button">Re-Do</a>
+                                                @permission('do-quality-check')
+                                                    @if ($batch->status == 'Submitted' || $batch->status == 'QCInProcess')
+                                                        @if ($article->status == 'Completed')
+                                                        <a class="btn btn-sm btn-success" href="/article/view/{{ $article->id }}/qc" role="button">QC Completed</a>
+                                                        @endif
+                                                    @endif
+                                                @endpermission
+                                            @else
+                                                @if ($article->status == 'Saved')
+                                                    <a class="btn btn-sm btn-success" href="/article/view/{{ $article->id }}" role="button">Open Article</a>
+                                                    <a class="btn btn-sm btn-info" href="/article/view/{{ $batch->id }}/completed/{{ $article->id }}" role="button">Mark as Completed</a>
                                                 @endif
-                                            @endpermission
+                                            @endif
                                         @else
-                                            @if($article->status == 'Assigned' || $article->status == 'Saved')
+                                            @if ((($batch->status == 'FullyAssigned' || $batch->status == 'InProcess') && ($article->status == 'Saved' || $article->status == 'Assigned')) || ($batch->status == 'Submitted' && $article->status == 'Completed'))
                                                 <a class="btn btn-sm btn-success" href="/article/view/{{ $article->id }}" role="button">Open Article</a>
                                             @else
                                                 <a class="btn btn-sm btn-success disabled" href="/article/view/{{ $article->id }}" disabled="disabled" role="button">Open Article</a>
@@ -118,13 +132,13 @@
                                             @if ($article->status == 'Saved')
                                                 <a class="btn btn-sm btn-info" href="/article/view/{{ $batch->id }}/completed/{{ $article->id }}" role="button">Mark as Completed</a>
                                             @endif
+                                            
+                                            @permission('move-to-saved')
+                                                @if ($article->status == 'Completed')
+                                                    <a class="btn btn-sm btn-info" href="/article/{{ $article->id }}/saved" role="button">Re-Do</a>
+                                                @endif
+                                            @endpermission
                                         @endif
-                                        
-                                        @permission('move-to-saved')
-                                            @if ($article->status == 'Completed')
-                                                <a class="btn btn-sm btn-info" href="/article/{{ $article->id }}/saved" role="button">Re-Do</a>
-                                            @endif
-                                        @endpermission  
                                     </td>    
                                 </tr>
                             @endforeach
@@ -142,37 +156,58 @@
                                     <td>{{ $article->article_url }}</td>
                                     <td>{{ $article->article_category }}</td>
                                     <td>{{ $article->user[0]->name }}</td>
-                                    <td>
-                                        @if($article->status == 'QualityChecked')
-                                            QC/Approved
-                                        @else
-                                            {{ $article->status }}</td>
-                                        @endif
+                                    <td>{{ $article->status }}</td>
                                     <td>
                                         @if (Auth::user()->hasRole(['admin', 'super-admin']))
                                             <a class="btn btn-sm btn-success" href="/article/view/{{ $article->id }}" role="button">Open Article</a>
                                             @permission('do-quality-check')
-                                                @if ($article->status == 'Completed')
-                                                    <!--<a class="btn btn-sm btn-success" href="/article/view/{{ $article->id }}/qc" role="button">QC Completed</a>-->
+                                                @if ($batch->status == 'Submitted' || $batch->status == 'QCInProcess')
+                                                    @if ($article->status == 'Completed')
+                                                    <a class="btn btn-sm btn-success" href="/article/view/{{ $article->id }}/qc" role="button">QC Completed</a>
+                                                    @endif
                                                 @endif
                                             @endpermission
                                         @else
-                                            @if($article->status == 'Assigned' || $article->status == 'Saved' || $article->status == 'Review')
+                                        
+                                        @endif
+                                        
+                                        @if ($batch->status == 'Submitted' || $batch->status == 'QCInProcess' || $batch->status == 'Final')
+                                            @if (Auth::user()->hasRole(['admin', 'super-admin']))
+                                                <a class="btn btn-sm btn-success" href="/article/view/{{ $article->id }}" role="button">Open Article</a>
+                                                @if ($article->status != 'Saved')
+                                                    <a class="btn btn-sm btn-info" href="/article/{{ $article->id }}/saved" role="button">Re-Do</a>
+                                                @endif
+                                                @permission('do-quality-check')
+                                                    @if ($batch->status == 'Submitted' || $batch->status == 'QCInProcess')
+                                                        @if ($article->status == 'Completed')
+                                                        <a class="btn btn-sm btn-success" href="/article/view/{{ $article->id }}/qc" role="button">QC Completed</a>
+                                                        @endif
+                                                    @endif
+                                                @endpermission
+                                            @else
+                                                @if ($article->status == 'Saved')
+                                                    <a class="btn btn-sm btn-success" href="/article/view/{{ $article->id }}" role="button">Open Article</a>
+                                                @endif
+                                            @endif
+                                        @else
+                                            @if ((($batch->status == 'FullyAssigned' || $batch->status == 'InProcess') && ($article->status == 'Saved' || $article->status == 'Assigned')) || ($batch->status == 'Submitted' && $article->status == 'Completed'))
                                                 <a class="btn btn-sm btn-success" href="/article/view/{{ $article->id }}" role="button">Open Article</a>
                                             @else
                                                 <a class="btn btn-sm btn-success disabled" href="/article/view/{{ $article->id }}" disabled="disabled" role="button">Open Article</a>
                                             @endif
                                             
                                             @if ($article->status == 'Saved')
-                                                <!--<a class="btn btn-sm btn-info" href="/article/view/{{ $batch->id }}/completed/{{ $article->id }}" role="button">Mark as Completed</a>-->
+                                                <a class="btn btn-sm btn-info" href="/article/view/{{ $batch->id }}/completed/{{ $article->id }}" role="button">Mark as Completed</a>
                                             @endif
+                                            
+                                            @permission('move-to-saved')
+                                                @if ($article->status == 'Completed')
+                                                    <a class="btn btn-sm btn-info" href="/article/{{ $article->id }}/saved" role="button">Re-Do</a>
+                                                @endif
+                                            @endpermission
+                                        
                                         @endif
                                         
-                                        @permission('move-to-saved')
-                                            @if ($article->status == 'Completed')
-                                                <!--<a class="btn btn-sm btn-info" href="/article/{{ $article->id }}/saved" role="button">Re-Do</a>-->
-                                            @endif
-                                        @endpermission
                                     </td>
                                 </tr>
                             @endforeach

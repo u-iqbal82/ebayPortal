@@ -56,8 +56,8 @@ class SendBatchCompletedNotification
         }
         else
         {
-            $batch->status = 'QCInProcess';
-            $batch->save();
+            //$batch->status = 'QCInProcess';
+            //$batch->save();
         }
     }
 }

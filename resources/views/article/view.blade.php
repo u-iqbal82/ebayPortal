@@ -28,11 +28,61 @@
                     <tr>
                         <td><b>URL</b></td>
                         <td><a href="{{ $article->article_url }}">{{ $article->article_url }}</a></td>
+                        <td>Article Status</td>
+                        <td>{{ $article->status }}</td>
                     </tr>    
                 
                 </table>
             </div>
         </div>
+        @if(count($article->comments) > 0)
+        <div class="row well well-sm">
+            <h4>Comments</h4>
+            <hr />        
+            <!--<ul class="list-group">-->
+            @foreach($article->comments->sortByDesc('created_at') as $comment)
+            <div class="list-group">
+                <a href="#" class="list-group-item">
+                    <div class="row">
+                        <div class="col-md-6"><h5 class="list-group-item-heading">By User : {{ $comment->user->name }}</h5></div>
+                        <div class="col-md-6"><h5 class="list-group-item-heading">Timestamp : {{ $comment->created_at }}</h5></div>
+                    </div>
+                    <hr />
+                    <!--<p><u>Comment:</u></p>-->
+                    <p class="list-group-item-text">{!! $comment->comment !!}</p>
+                    @if (count($comment->answers) > 0 )
+                        <ul>
+                        @foreach($comment->answers as $answer)
+                            <li><strong>{{ $answer->user->name }}</strong> - {!! $answer->comment !!}</li>
+                        @endforeach
+                        </ul>
+                    @endif
+                    <button class="btn btn-sm btn-primary open-form" id="open-form-{{ $comment->id }}" type="submit">Add a Reply</button>
+                </a>
+            </div>
+            <div class="add-answers-form" id="form-open-form-{{ $comment->id }}">
+                <h4>Add a Reply:</h4>
+                <form class="form" method="post" action="{{ route('article.comment.add.answer') }}" name="form-add-comment-answer" id="form-add-comment-answer">
+                  {{ csrf_field() }}
+                <div class="checkbox">
+                    <label>
+                      <input type="checkbox" name="flag_review" id="flag_review" value="1"> Flag to review
+                    </label>
+                </div> 
+                <input type="hidden" name="article_id" id="article_id" value="{{ $article->id }}" />
+                <input type="hidden" name="c_article_comment_id" id="c_article_comment_id" value="{{ $comment->id }}" />
+                  
+                <div class="form-group">
+                    <textarea name='article_answer' id="article_answer" class="form-control" rows="3"></textarea>
+                </div>
+                <input class="btn btn-default" type="submit" value="Submit">
+                </form>
+            </div>
+            @endforeach
+            <!--</ul>-->
+            
+        </div>
+        @endif
         <div class="row">
             <h4>Article Content</h4>
             <hr />
@@ -46,7 +96,7 @@
                     <input type="hidden" name="article_status" id="article_status" value="{{ $article->status }}" />
                     
                     <div class="form-group">
-                        <textarea name='article_content' class="form-control">@if (!empty($article->detail->description)) {{ $article->detail->description }} @endif</textarea>
+                        <textarea name='article_content' id="article_content" class="form-control">@if (!empty($article->detail->description)) {{ $article->detail->description }} @endif</textarea>
                     </div>
 
                 </div>
@@ -58,57 +108,60 @@
                     </div>
                     
                     <hr />
-                    @if ($article->status == 'QualityChecked')
-                        <div class="alert alert-danger" role="alert">Quality check has been completed!</div>
-                    @endif
-                    
-                    @if ($article->status != 'Completed' || ($article->status == 'Completed' && ($article->batch->status == 'Submitted' || $article->batch->status == 'QCInProcess')))
                     <div class="col-md-12">
-                        <button class="btn btn-primary pull-left btn-block" type="submit">Save Article</button>
-                    </div>
+                    @if ($article->status == 'QualityChecked')
+                        <div class="alert alert-danger" role="alert">Quality check has been completed but you can make changes to article and save or can Re-Do.!</div>
+                        <hr />
                     @endif
-                    @if ($article->status == 'Saved')
-                    <div class="col-md-12">    
-                        <a class="btn btn-sm btn-info btn-block" href="/article/view/{{ $article->batch_id }}/completed/{{ $article->id }}" role="button">Mark as Completed</a>
                     </div>
+                    
+                    @if (Auth::user()->hasRole(['admin', 'super-admin']))
+                        <div class="col-md-12">
+                            <button class="btn btn-primary pull-left btn-block" type="submit">Save Article</button>
+                        </div>
+                        @if ($article->status == 'Saved')
+                            <div class="col-md-12">    
+                                <a class="btn btn-completed btn-sm btn-info btn-block" href="/article/view/{{ $article->batch_id }}/completed/{{ $article->id }}" role="button">Mark as Completed</a>
+                            </div>
+                        @endif
+                        
+                        @if ($article->status == 'Completed' || $article->status == 'QualityChecked')
+                            @if ($article->status != 'QualityChecked')
+                                <div class="col-md-12 margin-bottom-10px">    
+                                    <a class="btn btn-sm btn-success btn-block" href="/article/view/{{ $article->id }}/qc" role="button">Mark QC Completed</a>
+                                </div>
+                            @endif
+                            <div class="col-md-12">    
+                                <!--<a class="btn btn-sm btn-warning btn-block" href="/article/{{ $article->id }}/saved" role="button">Re-Do without Comment</a>-->
+                            </div>
+                            <div class="col-md-12">    
+                                <button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target=".bs-example-modal-lg">Add Comment & Re-Do</button>
+                            </div>
+                        @endif
+                        
+                    @else
+                        @if ($article->status == 'Assigned' || $article->status == 'Saved' || $article->status == 'Review')
+                            <div class="col-md-12">
+                                <button class="btn btn-primary pull-left btn-block" type="submit">Save Article</button>
+                            </div>
+                        @endif
+                        
+                        @if ($article->status == 'Saved')
+                            <div class="col-md-12">    
+                                <a class="btn btn-sm btn-completed btn-info btn-block" href="/article/view/{{ $article->batch_id }}/completed/{{ $article->id }}" role="button">Mark as Completed</a>
+                            </div>
+                        @endif
+                        
+                        @if ($article->status == 'Completed')
+                            <div class="alert alert-danger" role="alert">No changes can be made now, article submitted for QC.</div>
+                        @endif
+                        
                     @endif
-                    
-                    @if ($article->status == 'Completed' )
-                    <div class="col-md-12 margin-bottom-10px">    
-                        <a class="btn btn-sm btn-success btn-block" href="/article/view/{{ $article->id }}/qc" role="button">QC Completed</a>
-                    </div>
-                    <div class="col-md-12">    
-                        <a class="btn btn-sm btn-warning btn-block" href="/article/{{ $article->id }}/saved" role="button">Re-Do without Comment</a>
-                    </div>
-                    <div class="col-md-12">    
-                        <button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target=".bs-example-modal-lg">Add Comment & Re-Do</button>
-                    </div>
-                    @endif
-                    
-                    
+                
                 </div>
             </form>
         </div>
-        
-        <div class="well well-sm">
-            <h4>Comments</h4>
-            <hr />        
-            <ul class="list-group">
-            @foreach($article->comments->sortByDesc('created_at') as $comment)
-            <div class="list-group">
-                <a href="#" class="list-group-item">
-                    <div class="row">
-                        <div class="col-md-6"><h5 class="list-group-item-heading">By User : {{ $comment->user_id }}</h5></div>
-                        <div class="col-md-6"><h5 class="list-group-item-heading">Timestamp : {{ $comment->created_at }}</h5></div>
-                    </div>
-                    <hr />
-                    <p><u>Comment:</u></p>
-                    <p class="list-group-item-text">{!! $comment->comment !!}</p>
-                </a>
-            @endforeach
-            </ul>
-        </div>
-        </div>
+
     </div>
     <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
   <div class="modal-dialog" role="document">
@@ -151,6 +204,12 @@
           paste_as_text: true,
           height: 500,
           menubar: "tools",
+          setup:function(ed) {
+               ed.on('change', function(e) {
+                   $('.btn-completed').addClass('btn-block');
+                   $('.btn-completed').atr('disbaled', 'disabled');
+               });
+           },
           plugins: [
             'link preview anchor',
             'searchreplace visualblocks code fullscreen',
@@ -164,6 +223,12 @@
             $('#form_article').submit();
         });
         
+        $('.open-form').on('click', function(){
+            id = $(this).attr('id');
+            //$('.add-answers-form'+id).show();
+            $('#form-'+id).show();
+        });
+        
         $('.save-comment').click(function(){
             //var commentLength = $('#article_comment').val().length;
             
@@ -172,7 +237,6 @@
                 $('#form-add-comment').submit();    
             //}
         });
-        
     </script>
 @endsection
 

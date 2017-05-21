@@ -59,7 +59,8 @@
                                                 <input class="btn btn-sm btn-danger" type="submit" value="Delete" />
                                             </form>
                                         @endif
-                                        <a class="btn btn-sm btn-info" href="/reset/user/{{ $user->id }}" role="button">Reset Password</a>
+                                        <a class="btn btn-sm btn-warning" href="/reset/user/{{ $user->id }}" role="button">Send Reset Password Email</a>
+                                        <a class="btn btn-sm btn-info" href="/reset/user/{{ $user->id }}/manual" role="button">Reset Password Manually</a>
                                     @endrole
                                     
                                     <!-- Button trigger modal -->

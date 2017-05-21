@@ -18,7 +18,7 @@ class CreateArticlesTable extends Migration
             $table->string('article_url');
             $table->string('article_subject');
             $table->string('article_category');
-            $table->enum('status', ['UnAssigned', 'Assigned', 'Saved', 'Completed', 'QualityChecked']);
+            $table->enum('status', ['UnAssigned', 'Assigned', 'Saved', 'Completed', 'Review', 'QualityChecked']);
             $table->timestamps();
             
             $table->foreign('batch_id')->references('id')->on('batches')->onDelete('cascade');

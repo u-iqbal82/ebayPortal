@@ -42,6 +42,11 @@ class FileImport extends Controller
         $batch = Batch::find($id);
         $articles = Article::where('batch_id', $id)->with('detail')->get();
         
+        if (empty($articles))
+        {
+            return redirect()->back()->with('fail', 'Nothing to download.');
+        }
+        
         $objPHPExcel = new PHPExcel();
         $objPHPExcel->getProperties()->setCreator("iThinkMedia")
 							 ->setLastModifiedBy("iThinkMedia")
@@ -57,11 +62,22 @@ class FileImport extends Controller
 		$i = 2;
 		foreach($articles as $article)
         {
-            $objPHPExcel->setActiveSheetIndex(0)
-            ->setCellValue('A'.$i, $article->article_url)
-            ->setCellValue('B'.$i, $article->article_subject)
-            ->setCellValue('C'.$i, $article->article_category)
-            ->setCellValue('D'.$i, str_replace('\r\n', '', $article->detail->description));
+            if (empty($article->detail->description))
+            {
+                $objPHPExcel->setActiveSheetIndex(0)
+                ->setCellValue('A'.$i, $article->article_url)
+                ->setCellValue('B'.$i, $article->article_subject)
+                ->setCellValue('C'.$i, $article->article_category);
+            }
+            else
+            {
+                 $objPHPExcel->setActiveSheetIndex(0)
+                ->setCellValue('A'.$i, $article->article_url)
+                ->setCellValue('B'.$i, $article->article_subject)
+                ->setCellValue('C'.$i, $article->article_category)
+                ->setCellValue('D'.$i, str_replace('\r\n', '', $article->detail->description)); 
+            }
+           
             
             ++$i;
         }
