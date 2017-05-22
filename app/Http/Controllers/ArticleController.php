@@ -186,6 +186,8 @@ class ArticleController extends Controller
         $article->status = $articleStatus;
         $article->save();
         
+        $article->touch();
+        
         $articleDetail = new ArticleDetail();
         $articleDetail->description = $request->article_content;
         $article->detail()->delete();

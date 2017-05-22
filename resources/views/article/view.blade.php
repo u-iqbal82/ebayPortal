@@ -53,7 +53,7 @@
                     @if (count($comment->answers) > 0 )
                         <ul>
                         @foreach($comment->answers as $answer)
-                            <li><strong>{{ $answer->user->name }}</strong> - {!! $answer->comment !!}</li>
+                            <li><strong>{{ $answer->user->name }}</strong> - {{ $answer->created_at }} {!! $answer->comment !!}</li>
                         @endforeach
                         </ul>
                     @endif
@@ -64,11 +64,15 @@
                 <h4>Add a Reply:</h4>
                 <form class="form" method="post" action="{{ route('article.comment.add.answer') }}" name="form-add-comment-answer" id="form-add-comment-answer">
                   {{ csrf_field() }}
+                
+                @if (Auth::user()->hasRole(['admin', 'super-admin']))  
                 <div class="checkbox">
                     <label>
                       <input type="checkbox" name="flag_review" id="flag_review" value="1"> Flag to review
                     </label>
-                </div> 
+                </div>
+                @endif
+                
                 <input type="hidden" name="article_id" id="article_id" value="{{ $article->id }}" />
                 <input type="hidden" name="c_article_comment_id" id="c_article_comment_id" value="{{ $comment->id }}" />
                   
