@@ -42,11 +42,13 @@
                         </tr>
                     </thead>
                     @foreach($usersInPlace as $userKey => $userValue)
+                    @if (Auth::user()->hasRole(['admin', 'super-admin']) || $userKey == Auth::user()->id)
                     <tr>
                         <td>{{ $userValue['name'] }}</td><td>{{ $userValue['number_of_articles'] }}</td>
                         <td>{{ $userValue['Saved'] }}</td><td>{{ $userValue['Completed'] + $userValue['QualityChecked'] }}</td>
                         <td>{{ $userValue['QualityChecked'] }}</td>
                     </tr>
+                    @endif
                     @endforeach
                 </table>
             </div>
