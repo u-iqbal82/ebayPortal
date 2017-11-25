@@ -119,7 +119,7 @@
                 </thead>
                 <tbody>
                 @php
-                    $totalArticles = 0;
+                    $totalArticlesCount = 0;
                     $totalUnAssigned = 0;
                     $totalAssigned = 0;
                     $totalSaved = 0;
@@ -158,7 +158,7 @@
                             }
                         }
                         
-                        $totalArticles = $totalArticles + count($batch->articles);
+                        $totalArticlesCount = $totalArticlesCount + count($batch->articles);
                         $totalUnAssigned = $totalUnAssigned + $unAssigned;
                         $totalAssigned = $totalAssigned + $assigned;
                         $totalSaved = $totalSaved + $saved;
@@ -219,7 +219,7 @@
                     <td> -- </td>
                     <td> -- </td>
                     <td> -- </td>
-                    <td>{{ $totalArticles }}</td>
+                    <td>{{ $totalArticlesCount }}</td>
                     <td>{{ $totalUnAssigned }}</td>
                     <td>{{ $totalAssigned }}</td>
                     <td>{{ $totalSaved }}</td>
