@@ -193,6 +193,23 @@ class BatchController extends Controller
         return view('batch.batch', compact('batch', 'category'));
     }
     
+    protected function getUsersAsArray()
+    {
+        $usersCache = array();
+        
+        $users = User::all();
+        if (count($users) > 0)
+        {
+            foreach($users as $user)
+            {
+                $usersCache[$user->id] = $user->name;
+            }
+        }
+        unset($users);
+        
+        return $usersCache;
+    }
+    
     public function viewBatch($id, $category = false)
     {
         
@@ -206,7 +223,8 @@ class BatchController extends Controller
             $category = 'all';
         }
         
-        $batch = Batch::find($id);    
+        $batch = Batch::find($id);
+        $users = $this->getUsersAsArray();
         
         $usersInPlace = array();
         
@@ -246,7 +264,7 @@ class BatchController extends Controller
         }
 
         
-        return view('batch.view', compact('batch', 'category', 'usersInPlace'));
+        return view('batch.view', compact('batch', 'category', 'usersInPlace', 'users'));
     }
     
     public function upload()

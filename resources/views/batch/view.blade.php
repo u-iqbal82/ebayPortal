@@ -80,7 +80,9 @@
                                 <th>URL</th>
                                 <th>Category</th>
                                 <th>Assigned To</th>
+                                <th>Date Assigned</th>
                                 <th>Status</th>
+                                <th>QC By</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -101,7 +103,21 @@
                                     <td>{{ $article->article_url }}</td>
                                     <td>{{ $article->article_category }}</td>
                                     <td>{{ $article->user[0]->name }}</td>
+                                    <td>
+                                        @if ($article->assigned_at != '0000-00-00 00:00:00')
+                                            {{ $article->assigned_at }}
+                                        @else
+                                            --
+                                        @endif
+                                    </td>
                                     <td>{{ $article->status }}</td>
+                                    <td>
+                                        @if ($article->qc_at == '0')
+                                            --
+                                        @else
+                                            {{ $users[$article->qc_at] }}
+                                        @endif                                                                        
+                                    </td>
                                     <td>    
                                         @if (Auth::user()->hasRole(['admin', 'super-admin']))
                                             <a class="btn btn-sm btn-success" href="/article/view/{{ $article->id }}" role="button">Open Article</a>
@@ -145,11 +161,26 @@
                                     <td>{{ $article->article_category }}</td>
                                     <td>{{ $article->user[0]->name }}</td>
                                     <td>
+                                        @if ($article->assigned_at != '0000-00-00 00:00:00')
+                                            {{ $article->assigned_at }}
+                                        @else
+                                            --
+                                        @endif
+                                    </td>
+                                    <td>
                                         @if($article->status == 'QualityChecked')
                                             QC/Approved
                                         @else
-                                            {{ $article->status }}</td>
+                                            {{ $article->status }}
                                         @endif
+                                    </td>
+                                    <td>
+                                        @if ($article->qc_at == '0')
+                                            --
+                                        @else
+                                            {{ $users[$article->qc_at] }}
+                                        @endif                                                                         
+                                    </td>
                                     <td>
                                         @if (Auth::user()->hasRole(['admin', 'super-admin']))
                                             <a class="btn btn-sm btn-success" href="/article/view/{{ $article->id }}" role="button">Open Article</a>

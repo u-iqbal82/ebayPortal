@@ -118,6 +118,16 @@
                 </tr>
                 </thead>
                 <tbody>
+                @php
+                    $totalArticles = 0;
+                    $totalUnAssigned = 0;
+                    $totalAssigned = 0;
+                    $totalSaved = 0;
+                    $totalCompleted = 0;
+                    $totalQualityChecked = 0;
+                    $totalReview = 0;
+                    
+                @endphp
                 @foreach($batches as $batch)
                     @php 
                         $style = '';
@@ -148,6 +158,14 @@
                             }
                         }
                         
+                        $totalArticles = $totalArticles + count($batch->articles);
+                        $totalUnAssigned = $totalUnAssigned + $unAssigned;
+                        $totalAssigned = $totalAssigned + $assigned;
+                        $totalSaved = $totalSaved + $saved;
+                        $totalCompleted = $totalCompleted + $completed;
+                        $totalQualityChecked = $totalQualityChecked + $qcChecked;
+                        $totalReview = $totalReview + $review;
+                    
                     @endphp
                 <tr @php echo $style; @endphp>
                     <td>{{ $batch->id }}</td>
@@ -195,6 +213,22 @@
                 </tr>
                 @endforeach
                 </tbody>
+                <tfooter>
+                    <tr class="success">
+                    <td> -- </td>
+                    <td> -- </td>
+                    <td> -- </td>
+                    <td> -- </td>
+                    <td>{{ $totalArticles }}</td>
+                    <td>{{ $totalUnAssigned }}</td>
+                    <td>{{ $totalAssigned }}</td>
+                    <td>{{ $totalSaved }}</td>
+                    <td>{{ $totalCompleted }}</td>
+                    <td>{{ $totalQualityChecked }}</td>
+                    <td>{{ $totalReview }}</td>
+                    <td> -- </td>
+                </tr>
+                </tfooter>
             </table>
         </div>
     </div>

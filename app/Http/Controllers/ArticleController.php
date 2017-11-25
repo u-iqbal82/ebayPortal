@@ -22,6 +22,7 @@ class ArticleController extends Controller
     {
         $article = Article::find($id);
         $article->status = 'QualityChecked';
+        $article->qc_at = Auth::user()->id;
         $article->save();
         
         Event::fire(new ArticleUpdated($article));
@@ -193,7 +194,7 @@ class ArticleController extends Controller
         $article->detail()->delete();
         $article->detail()->save($articleDetail);
 
-        if ($articleStatus == 'Saved')
+        if ($articleStatus == 'Saved' || $articleStatus == 'Completed')
         {
             $batch = Batch::find($batchId);
             
@@ -255,6 +256,7 @@ class ArticleController extends Controller
             {
                 $art = Article::find($articleId);
                 $art->status = 'Assigned';
+                $art->assigned_at = date('Y-m-d H:i:s');
                 $art->save();
                 
                 $user = User::find($userId);
