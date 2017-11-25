@@ -254,12 +254,22 @@ class BatchController extends Controller
                     $usersInPlace[$user->id]['Completed'] = 0;
                     $usersInPlace[$user->id]['Review'] = 0;
                     $usersInPlace[$user->id]['QualityChecked'] = 0;
+                    $usersInPlace[$user->id]['EditsCompleted'] = 0;
+                    $usersInPlace[$user->id]['EditsSaved'] = 0;
                 }
                 
                 $usersInPlace[$user->id]['name'] = $user->name;
                 $usersInPlace[$user->id]['number_of_articles'] = $usersInPlace[$user->id]['number_of_articles'] + 1;
                 
-                $usersInPlace[$user->id][$article->status] = $usersInPlace[$user->id][$article->status] + 1;
+                $status = $article->status;
+                
+                if ($status == 'EditsCompleted' || $status == 'EditsSaved')
+                {
+                    $status = 'Review';
+                }
+                
+                //$usersInPlace[$user->id][$article->status] = $usersInPlace[$user->id][$article->status] + 1;
+                $usersInPlace[$user->id][$status] = $usersInPlace[$user->id][$status] + 1;
             }
         }
 

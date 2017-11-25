@@ -123,13 +123,13 @@
                         <div class="col-md-12">
                             <button class="btn btn-primary pull-left btn-block" type="submit">Save Article</button>
                         </div>
-                        @if ($article->status == 'Saved')
+                        @if ($article->status == 'Saved' || $article->status == 'EditsSaved')
                             <div class="col-md-12">    
                                 <a class="btn btn-completed btn-sm btn-info btn-block" href="/article/view/{{ $article->batch_id }}/completed/{{ $article->id }}" role="button">Mark as Completed</a>
                             </div>
                         @endif
                         
-                        @if ($article->status == 'Completed' || $article->status == 'QualityChecked')
+                        @if ($article->status == 'Completed' || $article->status == 'QualityChecked' || $article->status == 'EditsCompleted')
                             @if ($article->status != 'QualityChecked')
                                 <div class="col-md-12 margin-bottom-10px">    
                                     <a class="btn btn-sm btn-success btn-block" href="/article/view/{{ $article->id }}/qc" role="button">Mark QC Completed</a>
@@ -144,13 +144,13 @@
                         @endif
                         
                     @else
-                        @if ($article->status == 'Assigned' || $article->status == 'Saved' || $article->status == 'Review')
+                        @if ($article->status == 'Assigned' || $article->status == 'Saved' || $article->status == 'Review' || $article->status == 'EditsCompleted')
                             <div class="col-md-12">
                                 <button class="btn btn-primary pull-left btn-block" type="submit">Save Article</button>
                             </div>
                         @endif
                         
-                        @if ($article->status == 'Saved')
+                        @if ($article->status == 'Saved' || $article->status == 'EditsSaved')
                             <div class="col-md-12">    
                                 <a class="btn btn-sm btn-completed btn-info btn-block" href="/article/view/{{ $article->batch_id }}/completed/{{ $article->id }}" role="button">Mark as Completed</a>
                             </div>

@@ -133,7 +133,16 @@ class ArticleController extends Controller
     public function completed($batch_id, $article_id)
     {
         $article = Article::find($article_id);
-        $article->status = 'Completed';
+        
+        if ($article->status == 'EditsSaved')
+        {
+            $article->status = 'EditsCompleted';
+        }
+        else
+        {
+            $article->status = 'Completed';
+        }
+        
         $article->save();
         
         $batch = Batch::find($batch_id);
@@ -181,7 +190,14 @@ class ArticleController extends Controller
         
         if ($articleStatus == 'Assigned' || $articleStatus == 'Review')
         {
-            $articleStatus = 'Saved';
+            if ($articleStatus == 'Review')
+            {
+                $articleStatus = 'EditsSaved';
+            }
+            else
+            {
+                $articleStatus = 'Saved';
+            }
         }
         
         $article->status = $articleStatus;
