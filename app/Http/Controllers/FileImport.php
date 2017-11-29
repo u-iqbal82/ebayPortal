@@ -76,7 +76,7 @@ class FileImport extends Controller
                 $description = str_replace('&nbsp;', '', $description);
                 $description = str_replace('&amp;', '&', $description);
                 $description = str_replace(array('<br />','<br/>'), '<br>', $description);
-                $description = str_replace("&nbsp;", '<br>', $description);
+                $description = str_replace("&nbsp;", ' ', $description);
 
                  $objPHPExcel->setActiveSheetIndex(0)
                 ->setCellValue('A'.$i, $article->article_url)
