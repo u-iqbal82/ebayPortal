@@ -71,8 +71,7 @@ class FileImport extends Controller
             }
             else
             {
-                $description = str_replace("\r\n", '', $article->detail->description);
-                $description = str_replace("\n", '', $article->detail->description);
+                $description = str_replace(array("\r\n", "\r", "\n"), '', $article->detail->description);
                 $description = str_replace('<p>&nbsp;</p>', '', $description);
                 $description = str_replace('&nbsp;', '', $description);
                 $description = str_replace('&amp;', '&', $description);
