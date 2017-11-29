@@ -76,12 +76,13 @@ class FileImport extends Controller
                 $description = str_replace('&nbsp;', '', $description);
                 $description = str_replace('&amp;', '&', $description);
                 $description = str_replace(array('<br />','<br/>'), '<br>', $description);
-                
+                $description = str_replace("&nbsp;", '<br>', $description);
+
                  $objPHPExcel->setActiveSheetIndex(0)
                 ->setCellValue('A'.$i, $article->article_url)
                 ->setCellValue('B'.$i, $article->article_subject)
                 ->setCellValue('C'.$i, $article->article_category)
-                ->setCellValue('D'.$i, str_replace('\r\n', '', $article->detail->description)); 
+                ->setCellValue('D'.$i, str_replace('\r\n', '', $description)); 
             }
            
             
