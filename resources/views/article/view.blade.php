@@ -40,6 +40,9 @@
             <h4>Comments</h4>
             <hr />        
             <!--<ul class="list-group">-->
+             @if (isset($_GET['debug']))
+                {{ dd($article->comments->sortByDesc('created_at')) }}
+            @endif
             @foreach($article->comments->sortByDesc('created_at') as $comment)
             <div class="list-group">
                 <a href="#" class="list-group-item">
