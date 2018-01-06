@@ -113,7 +113,7 @@
                     
                     <hr />
                     <div class="col-md-12">
-                    @if ($article->status == 'QualityChecked')
+                    @if ($article->status == 'QualityChecked' || $article->status == 'Final')
                         <div class="alert alert-danger" role="alert">Quality check has been completed but you can make changes to article and save or can Re-Do.!</div>
                         <hr />
                     @endif
@@ -129,11 +129,18 @@
                             </div>
                         @endif
                         
-                        @if ($article->status == 'Completed' || $article->status == 'QualityChecked' || $article->status == 'EditsCompleted')
-                            @if ($article->status != 'QualityChecked')
+                        @if ($article->status == 'Completed' || $article->status == 'QualityChecked' || $article->status == 'EditsCompleted' || $article->status == 'Final')
+                            @if ($article->status != 'QualityChecked' && $article->status != 'Final')
                                 <div class="col-md-12 margin-bottom-10px">    
                                     <a class="btn btn-sm btn-success btn-block" href="/article/view/{{ $article->id }}/qc" role="button">Mark QC Completed</a>
                                 </div>
+                            @endif
+                            @if ($article->status == 'QualityChecked')
+                                <hr />    
+                                <div class="col-md-12 margin-bottom-10px">    
+                                    <a class="btn btn-sm btn-success btn-block" href="/article/status/{{ $article->id }}/fs" role="button">Final Checks Completed</a>
+                                </div>
+                                <hr />
                             @endif
                             <div class="col-md-12">    
                                 <!--<a class="btn btn-sm btn-warning btn-block" href="/article/{{ $article->id }}/saved" role="button">Re-Do without Comment</a>-->

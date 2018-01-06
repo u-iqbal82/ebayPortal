@@ -114,6 +114,7 @@
                     <th>Completed</th>
                     <th>Quality Checked</th>
                     <th>Review</th>
+                    <th>Final</th>
                     <th>Actions</th>
                 </tr>
                 </thead>
@@ -126,6 +127,7 @@
                     $totalCompleted = 0;
                     $totalQualityChecked = 0;
                     $totalReview = 0;
+                    $totalFinal = 0;
                     
                 @endphp
                 @foreach($batches as $batch)
@@ -146,6 +148,8 @@
                         $review = count($batch->articles->where('status', 'Review'));
                         $qcChecked = count($batch->articles->where('status', 'QualityChecked'));
                         
+                        $final = count($batch->articles->where('status', 'Final'));
+                        
                         $unAssigned = $totalArticles - ($assigned + $saved + $completed + $qcChecked + $review);
                         $assigned = $assigned + $saved + $completed  + $qcChecked + $review;
                         
@@ -165,6 +169,7 @@
                         $totalCompleted = $totalCompleted + $completed;
                         $totalQualityChecked = $totalQualityChecked + $qcChecked;
                         $totalReview = $totalReview + $review;
+                        $totalFinal = $totalFinal + $final;
                     
                     @endphp
                 <tr @php echo $style; @endphp>
@@ -179,6 +184,7 @@
                     <td>{{ $completed }}</td>
                     <td>{{ $qcChecked }}</td>
                     <td>{{ $review }}</td>
+                    <td>{{ $final }}</td>
                     <td>
                         @permission('assign-users-to-batch')
                             @if (($assigned != $totalArticles) && ($batch->status == 'Created' || $batch->status = 'PartiallyAssigned'))
@@ -226,6 +232,7 @@
                     <td>{{ $totalCompleted }}</td>
                     <td>{{ $totalQualityChecked }}</td>
                     <td>{{ $totalReview }}</td>
+                    <td>{{ $totalFinal }}</td>
                     <td> -- </td>
                 </tr>
                 </tfooter>

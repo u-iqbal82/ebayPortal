@@ -28,7 +28,7 @@
                     </tr>
                 </table>
             </div>
-            <div class="col-md-5 col-md-offset-1">
+            <div class="col-md-8 col-md-offset-1">
                 <h4>Assigned to Users</h4>
                 <hr />
                 <table class="table">
@@ -39,6 +39,7 @@
                             <th>Saved</th>
                             <th>Completed</th>
                             <th>Quality Checked</th>
+                            <th>Final</th>
                         </tr>
                     </thead>
                     @foreach($usersInPlace as $userKey => $userValue)
@@ -46,7 +47,7 @@
                     <tr>
                         <td>{{ $userValue['name'] }}</td><td>{{ $userValue['number_of_articles'] }}</td>
                         <td>{{ $userValue['Saved'] }}</td><td>{{ $userValue['Completed'] + $userValue['QualityChecked'] }}</td>
-                        <td>{{ $userValue['QualityChecked'] }}</td>
+                        <td>{{ $userValue['QualityChecked'] }}</td><td>{{ $userValue['Final'] }}</td>
                     </tr>
                     @endif
                     @endforeach

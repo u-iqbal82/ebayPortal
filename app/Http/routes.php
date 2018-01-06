@@ -107,6 +107,7 @@ Route::group(['middleware' => ['auth']], function () {
     
     Route::get('/article/view/{id}', 'ArticleController@view')->name('article.view');
     Route::get('/article/view/{id}/qc', 'ArticleController@qcCompleted')->name('article.qc');
+    Route::get('/article/status/{id}/fs', 'ArticleController@articleFinalised')->name('article.fs');
     Route::get('/article/view/{batch_id}/completed/{article_id}', 'ArticleController@completed')->name('article.completed');
     Route::get('/article/{article_id}/saved', 'ArticleController@saved')->name('article.saved');
     Route::post('/article/save', 'ArticleController@save')->name('article.save');

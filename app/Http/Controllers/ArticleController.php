@@ -18,6 +18,17 @@ use Auth;
 
 class ArticleController extends Controller
 {
+     public function articleFinalised($id)
+    {
+        $article = Article::find($id);
+        $article->status = 'Final';
+        $article->save();
+        
+        Event::fire(new ArticleUpdated($article));
+        
+        return \Redirect::route('batch.view', ['id' => $article->batch_id])->with('success', 'Article status updated!');
+    }
+    
     public function qcCompleted($id)
     {
         $article = Article::find($id);

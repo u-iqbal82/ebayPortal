@@ -256,6 +256,7 @@ class BatchController extends Controller
                     $usersInPlace[$user->id]['QualityChecked'] = 0;
                     $usersInPlace[$user->id]['EditsCompleted'] = 0;
                     $usersInPlace[$user->id]['EditsSaved'] = 0;
+                    $usersInPlace[$user->id]['Final'] = 0;
                 }
                 
                 $usersInPlace[$user->id]['name'] = $user->name;
