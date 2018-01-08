@@ -18,7 +18,46 @@ use Auth;
 
 class ArticleController extends Controller
 {
-     public function articleFinalised($id)
+    public function updateArticlesByArticleId(Request $request)
+    {
+        $validationRules = [
+            'batch_id' => 'required|integer',
+            'update_status_to' => 'required'
+        ];
+            
+        $this->validate($request, $validationRules);
+        
+        $batchId = $request->batch_id;
+        $statusToUpdate = $request->update_status_to;
+        $articles = $request->articles;
+        
+        if ($statusToUpdate == 'false')
+        {
+            return \Redirect::route('batch.view', ['id' => $batchId])->with('fail', 'Please select "status" to update from the dropdown!');
+        }
+        
+        if (count($articles) > 0)
+        {
+            foreach($articles as $articleId)
+            {
+                $article = Article::find($articleId);
+                
+                if ($article->status != $statusToUpdate)
+                {
+                    $article->status = $statusToUpdate;
+                    $article->save();
+                }
+            }
+            
+            return \Redirect::route('batch.view', ['id' => $batchId])->with('success', 'Article status updated!');
+        }
+        else
+        {
+            return \Redirect::route('batch.view', ['id' => $batchId])->with('fail', 'Please select articles to update!');
+        }
+    }
+    
+    public function articleFinalised($id)
     {
         $article = Article::find($id);
         $article->status = 'Final';

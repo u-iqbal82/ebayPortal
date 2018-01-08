@@ -84,7 +84,9 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/batch/assign/{id}', 'BatchController@assignArticles');
         
         Route::post('/artilces/assign', 'ArticleController@assignArtilcesToUsers')->name('articles.assign');
+        Route::post('/articles/update', 'ArticleController@updateArticlesByArticleId')->name('articles.update');
         Route::get('/batch/download/{id}', 'BatchController@download');
+        
     });
     
     Route::get('/batch/status/{id}/submit', 'BatchController@submitBatch');

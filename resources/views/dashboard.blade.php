@@ -148,10 +148,15 @@
                         $review = count($batch->articles->where('status', 'Review'));
                         $qcChecked = count($batch->articles->where('status', 'QualityChecked'));
                         
+                        $editsSaved = count($batch->articles->where('status', 'EditsSaved'));
+                        $editsCompleted = count($batch->articles->where('status', 'EditsCompleted'));
+                        
                         $final = count($batch->articles->where('status', 'Final'));
                         
-                        $unAssigned = $totalArticles - ($assigned + $saved + $completed + $qcChecked + $review);
-                        $assigned = $assigned + $saved + $completed  + $qcChecked + $review;
+                        $unAssigned = $totalArticles - ($assigned + $saved + $completed + $qcChecked + $review + $editsSaved + $editsCompleted + $final);
+                        $assigned = $assigned + $saved + $completed  + $qcChecked + $review + $editsSaved + $editsCompleted + $final;
+                        
+                        $review = $review + ($editsSaved + $editsCompleted);
                         
                         $markAsS = '';
                         if ($batch->status == 'Submitted' || $batch->status == 'QCInProcess')
@@ -168,7 +173,7 @@
                         $totalSaved = $totalSaved + $saved;
                         $totalCompleted = $totalCompleted + $completed;
                         $totalQualityChecked = $totalQualityChecked + $qcChecked;
-                        $totalReview = $totalReview + $review;
+                        $totalReview = $totalReview + $review; // + $editsSaved + $editsCompleted);
                         $totalFinal = $totalFinal + $final;
                     
                     @endphp

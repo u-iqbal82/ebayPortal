@@ -37,27 +37,52 @@
                             <th>Name</th>
                             <th>No. of Articles Assigned</th>
                             <th>Saved</th>
+                            <th>Review</th>
                             <th>Completed</th>
                             <th>Quality Checked</th>
                             <th>Final</th>
                         </tr>
                     </thead>
+                    @php
+                        $totalAssigned = $totalSaved = $totalComplete = $totalQC = $totalFinal = $totalReview = $totalReviewCompleted = 0;
+                    @endphp
+                    
                     @foreach($usersInPlace as $userKey => $userValue)
                     @if (Auth::user()->hasRole(['admin', 'super-admin']) || $userKey == Auth::user()->id)
                     <tr>
                         <td>{{ $userValue['name'] }}</td><td>{{ $userValue['number_of_articles'] }}</td>
-                        <td>{{ $userValue['Saved'] }}</td><td>{{ $userValue['Completed'] + $userValue['QualityChecked'] }}</td>
+                        <td>{{ $userValue['Saved'] }}</td><td>{{ $userValue['Review'] }}</td>
+                        <td>{{ $userValue['Completed'] }}</td>
                         <td>{{ $userValue['QualityChecked'] }}</td><td>{{ $userValue['Final'] }}</td>
                     </tr>
+                    
+                    @php
+                        $totalAssigned = $totalAssigned + $userValue['number_of_articles'];
+                        $totalSaved = $totalSaved + $userValue['Saved'];
+                        $totalComplete = $totalComplete + $userValue['Completed'];
+                        $totalQC = $totalQC + $userValue['QualityChecked'];
+                        $totalFinal = $totalFinal + $userValue['Final'];
+                        $totalReview = $totalReview + $userValue['Review'];
+                    @endphp
+                    
                     @endif
                     @endforeach
+                    <tfooter>
+                        <tr>
+                            <td> -- </td><td>{{ $totalAssigned }}</td>
+                            <td>{{ $totalSaved }}</td><td>{{ $totalReview }}</td>
+                            <td>{{ $totalComplete }}</td>
+                            <td>{{ $totalQC }}</td><td>{{ $totalFinal }}</td>
+                        </tr>
+                    </tfooter>
                 </table>
             </div>
         </div>
         <h4>Articles</h4>
         <hr />
+        <!--
         <div class="row">
-        <div class="form-group pull-right">
+        <div class="form-group pull-left">
             <label for="inputPassword3" class="col-md-4 control-label">Category Filter: </label>
             <div class="col-md-8">
                 <select name="categories" class="form-control" id="categories">
@@ -69,10 +94,41 @@
             </div>
           </div>
         </div>
+        -->
         
         <div class="row">
             @if(count($batch->articles) > 0)
-                    
+                    <form class="form form-inline" action="{{ route('articles.update') }}" method="post">
+                        {{ csrf_field() }}
+                        <input type="hidden" name="batch_id" id="batch_id" value="{{ $batch->id }}" />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group pull-left">
+                            <label for="inputPassword3" class="col-md-4 control-label">Category Filter: </label>
+                            <div class="col-md-8">
+                                <select name="categories" class="form-control" id="categories">
+                                    <option value="/batch/view/{{ $batch->id }}/batch/all" selected="selected">Show All</option>
+                                    @foreach ($batch->articles()->groupBy('article_category')->get() as $cat)
+                                        <option @if($category == $cat->article_category) selected="selected" @endif value="/batch/view/{{ $batch->id }}/batch/{{ $cat->article_category }}">{{ $cat->article_category }}</option>
+                                    @endforeach    
+                                </select>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group pull-right" style="margin-right:40px;">
+                                <label for="update_status_to" class="col-md-3 control-label">Update Status : </label>
+                                <div class="col-md-5">
+                                    <select name="update_status_to" id="update_status_to" class="form-control">
+                                        <option value="false"> -- Please select -- </option>
+                                        <option value="Final">Mark as Final</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3"><input type="submit" class="btn btn-primary" value="Update Status" /></div>
+                            </div>
+                        </div>
+                    </div>
+                    <br /><br />
                     <table class="table table-condensed table-striped">
                         <thead>
                             <tr>
@@ -85,6 +141,7 @@
                                 <th>Status</th>
                                 <th>QC By</th>
                                 <th>Action</th>
+                                <th><input type="checkbox" name="select_all_art" id="select_all_art" /></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -144,7 +201,10 @@
                                                 <a class="btn btn-sm btn-info" href="/article/{{ $article->id }}/saved" role="button">Re-Do</a>
                                             @endif
                                         @endpermission  
-                                    </td>    
+                                    </td>   
+                                    <td>
+                                        <input class="cats_art" type="checkbox" name="articles[]" value="{{ $article->id }}" />
+                                    </td>
                                 </tr>
                             @endforeach
                         @else
@@ -208,11 +268,15 @@
                                             @endif
                                         @endpermission
                                     </td>
+                                    <td>
+                                        <input class="cats_art" type="checkbox" name="articles[]" value="{{ $article->id }}" />
+                                    </td>
                                 </tr>
                             @endforeach
                         @endif
                         </tbody>
                 </table>
+                </form>
             @endif
         </div>
     @else
