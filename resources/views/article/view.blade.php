@@ -132,13 +132,15 @@
                         @if ($article->status == 'Completed' || $article->status == 'QualityChecked' || $article->status == 'EditsCompleted' || $article->status == 'Final')
                             @if ($article->status != 'QualityChecked' && $article->status != 'Final')
                                 <div class="col-md-12 margin-bottom-10px">    
+                                    <!--<button type="button" class="btn btn-sm btn-success btn-block btn-mark-qc" role="button">Mark QC Completed</button>-->
                                     <a class="btn btn-sm btn-success btn-block" href="/article/view/{{ $article->id }}/qc" role="button">Mark QC Completed</a>
                                 </div>
                             @endif
                             @if ($article->status == 'QualityChecked')
                                 <hr />    
                                 <div class="col-md-12 margin-bottom-10px">    
-                                    <a class="btn btn-sm btn-success btn-block" href="/article/status/{{ $article->id }}/fs" role="button">Final Checks Completed</a>
+                                    <!--<a class="btn btn-sm btn-success btn-block" href="/article/status/{{ $article->id }}/fs" role="button">Final Checks Completed</a>-->
+                                    <button class="btn btn-sm btn-success btn-block btn-fc-complete" role="button">Final Checks Completed</button>
                                 </div>
                                 <hr />
                             @endif
@@ -233,6 +235,12 @@
             $('#article_status').val('Completed');
             $('#form_article').submit();
         });
+        
+        $('.btn-fc-complete').on('click', function(){
+            $('#article_status').val('Final');
+            $('#form_article').submit();
+        });
+        
         
         $('.open-form').on('click', function(){
             id = $(this).attr('id');
