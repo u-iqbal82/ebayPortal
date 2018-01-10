@@ -31,7 +31,9 @@ class ArticleController extends Controller
         $statusToUpdate = $request->update_status_to;
         $articles = $request->articles;
         
-        if ($statusToUpdate == 'false')
+        $allowedStatus = ['Final', 'UnAssigned'];
+        
+        if ($statusToUpdate == 'false' || !in_array($statusToUpdate, $allowedStatus))
         {
             return \Redirect::route('batch.view', ['id' => $batchId])->with('fail', 'Please select "status" to update from the dropdown!');
         }
@@ -45,6 +47,16 @@ class ArticleController extends Controller
                 if ($article->status != $statusToUpdate)
                 {
                     $article->status = $statusToUpdate;
+                    
+                    if ($statusToUpdate == 'UnAssigned')
+                    {
+                        $article->assigned_at = '0000-00-00 00:00:00';
+                        $article->qc_at = 0;
+                        $article->user()->detach();
+                        $article->detail()->delete();
+                        $article->comments()->delete();
+                    }
+                    
                     $article->save();
                 }
             }
