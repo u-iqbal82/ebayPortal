@@ -68,7 +68,7 @@
                     @endif
                     @endforeach
                     <tfooter>
-                        <tr>
+                        <tr class="info bold">
                             <td> -- </td><td>{{ $totalAssigned }}</td>
                             <td>{{ $totalSaved }}</td><td>{{ $totalReview }}</td>
                             <td>{{ $totalComplete }}</td>
@@ -133,6 +133,7 @@
                     <table class="table table-condensed table-striped">
                         <thead>
                             <tr>
+                                <th><input type="checkbox" name="select_all_art" id="select_all_art" /></th>
                                 <th>#</th>
                                 <th>Subject</th>
                                 <th>URL</th>
@@ -142,7 +143,6 @@
                                 <th>Status</th>
                                 <th>QC By</th>
                                 <th>Action</th>
-                                <th><input type="checkbox" name="select_all_art" id="select_all_art" /></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -155,8 +155,23 @@
                                 @if ($article->user[0]->id != Auth::user()->id && !Auth::user()->hasRole(['admin', 'super-admin']))
                                     @continue;
                                 @endif
-
-                                <tr>
+                                
+                                @php
+                                $focus = '';
+                                
+                                if (isset($articleToFocus) && $articleToFocus !== FALSE)
+                                {
+                                    if ($articleToFocus ==  $article->id)
+                                    {
+                                        $focus = 'class="focus-row"';
+                                    }
+                                }
+                                @endphp
+                                
+                                <tr @php echo $focus; @endphp>
+                                    <td>
+                                        <input class="cats_art" type="checkbox" name="articles[]" value="{{ $article->id }}" />
+                                    </td>
                                     <td>{{ $index + 1}}</td>
                                     <td>{{ $article->article_subject }}</td>
                                     <td>{{ $article->article_url }}</td>
@@ -203,9 +218,6 @@
                                             @endif
                                         @endpermission  
                                     </td>   
-                                    <td>
-                                        <input class="cats_art" type="checkbox" name="articles[]" value="{{ $article->id }}" />
-                                    </td>
                                 </tr>
                             @endforeach
                         @else
@@ -216,7 +228,22 @@
                                 @if ($article->user[0]->id != Auth::user()->id && !Auth::user()->hasRole(['admin', 'super-admin']))
                                     @continue;
                                 @endif
-                                <tr>
+                                
+                                @php
+                                
+                                $focus = '';
+                                if (isset($articleToFocus) && $articleToFocus !== FALSE)
+                                {
+                                    if ($articleToFocus ==  $article->id)
+                                    {
+                                        $focus = 'class="focus-row"';
+                                    }
+                                }
+                                @endphp
+                                <tr @php echo $focus; @endphp>
+                                    <td>
+                                        <input class="cats_art" type="checkbox" name="articles[]" value="{{ $article->id }}" />
+                                    </td>
                                     <td>{{ $index + 1 }}</td>
                                     <td>{{ $article->article_subject }}</td>
                                     <td>{{ $article->article_url }}</td>
@@ -269,9 +296,6 @@
                                             @endif
                                         @endpermission
                                     </td>
-                                    <td>
-                                        <input class="cats_art" type="checkbox" name="articles[]" value="{{ $article->id }}" />
-                                    </td>
                                 </tr>
                             @endforeach
                         @endif
@@ -284,4 +308,12 @@
         Nothing to show.
     @endif
 </div>
+@endsection
+
+@section('footerjs')
+<script type="text/javascript">
+//$(window).scrollTop($('.focus-row').position().top);
+$('html, body').animate({ scrollTop: $(".focus-row").offset().top-200 }, 500);
+$('.focus-row').addClass('info');
+</script>
 @endsection

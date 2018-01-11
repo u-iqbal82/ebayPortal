@@ -229,7 +229,7 @@ class ArticleController extends Controller
             }
         }
         
-       return \Redirect::route('batch.view', ['id' => $batch_id])->with('success', 'Article marked as completed!');
+       return \Redirect::route('batch.view', ['id' => $batch_id, 'category' => 'all', 'article_id' => $article_id])->with('success', 'Article marked as completed!');
     }
     
     public function save(Request $request)
@@ -291,8 +291,13 @@ class ArticleController extends Controller
             }
             return redirect()->route('article.view', compact('article'));
         }
+        
+        if ($articleStatus == 'QualityChecked')
+        {
+            return redirect()->route('article.view', compact('article'));
+        }
             
-        return \Redirect::route('batch.view', ['id' => $batchId])->with('success', 'Article updated!');
+        return \Redirect::route('batch.view', ['id' => $batchId, 'category' => 'all', 'article_id' => $articleId])->with('success', 'Article updated!');
     }
     
     public function view($id)

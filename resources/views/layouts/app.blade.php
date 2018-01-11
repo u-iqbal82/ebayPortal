@@ -20,7 +20,7 @@
 </head>
 <body id="app-layout">
     @include('includes.menu')
-    
+
     @if ( session()->has('fail') )
         <div class="alert alert-danger alert-dismissable">{{ session()->get('fail') }}</div>
     @endif

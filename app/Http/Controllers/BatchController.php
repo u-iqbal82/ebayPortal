@@ -210,7 +210,7 @@ class BatchController extends Controller
         return $usersCache;
     }
     
-    public function viewBatch($id, $category = false)
+    public function viewBatch($id, $category = false, $article_id = false)
     {
         
         if ($category !== false)
@@ -233,6 +233,12 @@ class BatchController extends Controller
         //dd($articles);
         
         $usersAlreadySelected = [];
+        $articleToFocus = false;
+        
+        if ($article_id !== FALSE)
+        {
+            $articleToFocus = $article_id;
+        }
         
         foreach($articles as $article)
         {
@@ -275,7 +281,7 @@ class BatchController extends Controller
         }
 
         
-        return view('batch.view', compact('batch', 'category', 'usersInPlace', 'users'));
+        return view('batch.view', compact('batch', 'category', 'usersInPlace', 'users', 'articleToFocus'));
     }
     
     public function upload()

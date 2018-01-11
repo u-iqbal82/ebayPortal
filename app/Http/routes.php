@@ -102,7 +102,7 @@ Route::group(['middleware' => ['auth']], function () {
         'as' => 'batch.show'
     ]);
 
-    Route::get('/batch/view/{id}/batch/{category?}', [
+    Route::get('/batch/view/{id}/batch/{category?}/{article_id?}', [
         'uses' => 'BatchController@viewBatch',
         'as' => 'batch.view'
     ]);

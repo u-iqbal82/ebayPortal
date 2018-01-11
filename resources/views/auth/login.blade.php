@@ -1,7 +1,13 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
+<div class="container-fluid">
+    <!--
+    <div class="col-md-6 left-box" id="col1">
+            <img src="https://www.ithinkmedia.co.uk/wp-content/uploads/2017/09/iTM-drop-shadow.png" width="400" alt="iThinkMedia" />        
+    </div>
+    <div class="col-md-6" id="col2">
+    -->
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
             <div class="panel panel-default">
@@ -61,6 +67,7 @@
                 </div>
             </div>
         </div>
+    <!--</div>-->
     </div>
 </div>
 @endsection

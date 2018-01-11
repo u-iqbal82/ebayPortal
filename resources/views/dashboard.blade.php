@@ -251,7 +251,8 @@
     
     <script type="text/javascript">
         $('#BatchTable').DataTable({
-            "order": [[ 1, "desc" ]]
+            "order": [[ 1, "desc" ]],
+            "lengthMenu": [[50, 100, 150, -1], [50, 100, 150, "All"]]
         } );
     </script>
 @endsection
