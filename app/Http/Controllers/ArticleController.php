@@ -263,6 +263,12 @@ class ArticleController extends Controller
         }
         
         $article->status = $articleStatus;
+        
+        if ($articleStatus == 'QualityChecked')
+        {
+            $article->qc_at = Auth::user()->id;
+        }
+        
         $article->save();
         
         $article->touch();
