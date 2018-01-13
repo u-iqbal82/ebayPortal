@@ -19,7 +19,9 @@
     @yield('headercss')
 </head>
 <body id="app-layout">
-    @include('includes.menu')
+    @if(!Auth::guest())
+        @include('includes.menu')
+    @endif
 
     @if ( session()->has('fail') )
         <div class="alert alert-danger alert-dismissable">{{ session()->get('fail') }}</div>
