@@ -122,7 +122,11 @@
                                     <select name="update_status_to" id="update_status_to" class="form-control">
                                         <option value="false"> -- Please select -- </option>
                                         <option value="Final">Mark as Final</option>
-                                        <option value="UnAssigned">Move to Un-Assigned</option>
+                                        
+                                        @if (Auth::user()->hasRole(['admin', 'super-admin']))  
+                                            <option value="UnAssigned">Move to Un-Assigned</option>
+                                        @endif
+                                        
                                     </select>
                                 </div>
                                 <div class="col-md-3"><input type="submit" class="btn btn-primary" value="Update Status" /></div>
