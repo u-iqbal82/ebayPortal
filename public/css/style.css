@@ -199,3 +199,7 @@ nav.sidebar, .main{
 .top-menu .navbar-nav > li > a {
     color: #FFF !important;
 }
+.no-padding-lr{padding-left:0px !important; padding-right:0px !important;}
+table.dataTable thead th, table.dataTable thead td {
+    padding: 8px 14px !important;
+}

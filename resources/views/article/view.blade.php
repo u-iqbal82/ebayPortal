@@ -25,9 +25,18 @@
                         <td>Batch</td>
                         <td><a href="/batch/view/{{ $article->batch_id }}/batch">{{ $article->batch->name }}</a></td>
                     </tr>
+                    
+                    @php
+                        $url = $article->article_url;
+                        if (stripos($url, 'http://') === false)
+                        {
+                            $url = 'http://' . $url;
+                        }
+                    @endphp
+                    
                     <tr>
                         <td><b>URL</b></td>
-                        <td><a href="{{ $article->article_url }}">{{ $article->article_url }}</a></td>
+                        <td><a target="_blank" href="{{ $url }}">{{ $article->article_url }}</a></td>
                         <td>Article Status</td>
                         <td>{{ $article->status }}</td>
                     </tr>    

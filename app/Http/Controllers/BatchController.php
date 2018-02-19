@@ -18,6 +18,50 @@ use Illuminate\Support\Facades\Event;
 
 class BatchController extends Controller
 {
+    public function moveBatch(Request $request)
+    {
+        $validationRules = [
+            'batches' => 'required',
+            'action_select' => 'required'
+        ];
+        
+        $this->validate($request, $validationRules);
+        
+        $statusToUpdate = $request->action_select;
+        $allowedStatus = ['archive', 'un-archive'];
+        
+        if ($statusToUpdate == 'false' || $statusToUpdate == false || !in_array($statusToUpdate, $allowedStatus))
+        {
+            return \Redirect::route('dashboard')->with('fail', 'Please select "status" to update from the dropdown!');
+        }
+        
+        $messages = 'Batches moved to archived.';
+        
+        if (count($request->batches) > 0)
+        {
+            foreach($request->batches as $batchId)
+            {
+                $batch = Batch::find($batchId);
+                
+                if ($statusToUpdate == 'archive')
+                {
+                    $statusToUpdate = 'Archived';
+                }
+                else
+                {
+                    $statusToUpdate = $batch->status;
+                    $messages = 'Batches un-archived successfully.';
+                }
+                
+                
+                $batch->status_final = $statusToUpdate;
+                $batch->save();
+            }
+        }
+        
+        return \Redirect::route('dashboard')->with('success', $messages);
+    }
+    
     public function notifyBatchAvailability($id)
     {
         $batch = Batch::find($id);
@@ -61,6 +105,7 @@ class BatchController extends Controller
     {
         $batch = Batch::find($id);
         $batch->status = 'Submitted';
+        $batch->status_final = 'Submitted';
         $batch->save();
         
         Event::fire(new BatchUpdated($batch));
@@ -147,6 +192,7 @@ class BatchController extends Controller
                 $newBatch->name = $batchName;
                 $newBatch->file_name = $batch->file_name;
                 $newBatch->status = 'Created';
+                $newBatch->status_final = 'Created';
                 $newBatch->upload_user_id = Auth::user()->id;
                 $newBatch->save();
                 
@@ -316,6 +362,7 @@ class BatchController extends Controller
                 $batch->file_name = $fileName;
                 $batch->upload_user_id = Auth::user()->id;
                 $batch->status = 'Created';
+                $batch->status_final = 'Created';
                 $batch->save();
                 
                 $batchId = $batch->id;

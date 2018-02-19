@@ -223,6 +223,7 @@ class ArticleController extends Controller
             if ($batch->status == 'InProcess')
             {
                 $batch->status = 'Completed';
+                $batch->status_final = 'Completed';
                 $batch->save();
                 
                 Event::fire(new BatchUpdated($batch));
@@ -285,6 +286,7 @@ class ArticleController extends Controller
             if ($batch->status == 'FullyAssigned')
             {
                 $batch->status = 'InProcess';
+                $batch->status_final = 'InProcess';
                 $batch->save();    
             } 
             else 
@@ -398,11 +400,12 @@ class ArticleController extends Controller
             if ($totalUnAssigned == 0)
             {
                 $batch->status = 'FullyAssigned';
-                
+                $batch->status_final = 'FullyAssigned';
             }
             else
             {
                 $batch->status = 'PartiallyAssigned';
+                $batch->status_final = 'PartiallyAssigned';
             }
             $batch->save();
             

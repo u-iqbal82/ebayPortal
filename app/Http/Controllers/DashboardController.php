@@ -13,11 +13,16 @@ use Auth;
 
 class DashboardController extends Controller
 {
-    public function showDashboard()
+    public function showDashboard($flag = 'false')
     {
         if (Auth()->user()->is('super-admin') || Auth()->user()->is('admin'))
         {
-            $batches = Batch::orderBy('id', 'desc')->get();
+            $batches = Batch::where('status_final', '<>', 'Archived')->orderBy('id', 'desc')->get();
+            
+            if ($flag == 'archived')
+            {
+                $batches = Batch::where('status_final', '=', 'Archived')->orderBy('id', 'desc')->get();
+            }
         }
         else
         {
@@ -73,6 +78,6 @@ class DashboardController extends Controller
             //dd($batches);
         }
         **/
-        return view('dashboard', compact('batches'));
+        return view('dashboard', compact('batches', 'flag'));
     }
 }

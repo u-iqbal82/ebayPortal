@@ -31,7 +31,10 @@ Route::get('logout', 'Auth\AuthController@logout');
 Route::group(['middleware' => ['auth']], function () {
     
     $this->get('dashboard', 'DashboardController@showDashboard')->name('dashboard');
+    $this->get('dashboard/{flag?}', 'DashboardController@showDashboard')->name('dashboard');
+    
     $this->get('/', 'DashboardController@showDashboard');
+    $this->get('/{flag?}', 'DashboardController@showDashboard');
     
     
     
@@ -63,6 +66,10 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/batch/upload', [
             'uses' => 'BatchController@uploadHandler',
             'as' => 'batch.uploadHandler'
+        ]);
+        Route::post('/batch/move', [
+            'uses' => 'BatchController@moveBatch',
+            'as' => 'batch.move'
         ]);
     });
     
