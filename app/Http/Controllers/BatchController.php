@@ -21,13 +21,13 @@ class BatchController extends Controller
     public function moveBatch(Request $request)
     {
         $validationRules = [
-            'batches' => 'required',
+            'batches' => 'required|array',
             'action_select' => 'required'
         ];
         
         $this->validate($request, $validationRules);
         
-        $statusToUpdate = $request->action_select;
+        $statusToUpdate = $statusToUpdateNew = $request->action_select;
         $allowedStatus = ['archive', 'un-archive'];
         
         if ($statusToUpdate == 'false' || $statusToUpdate == false || !in_array($statusToUpdate, $allowedStatus))
@@ -37,24 +37,26 @@ class BatchController extends Controller
         
         $messages = 'Batches moved to archived.';
         
-        if (count($request->batches) > 0)
+        $batches = $request->batches;
+        
+        if (count($batches) > 0)
         {
-            foreach($request->batches as $batchId)
+            foreach($batches as $batchId)
             {
                 $batch = Batch::find($batchId);
                 
                 if ($statusToUpdate == 'archive')
                 {
-                    $statusToUpdate = 'Archived';
+                    $statusToUpdateNew = 'Archived';
                 }
                 else
                 {
-                    $statusToUpdate = $batch->status;
+                    $statusToUpdateNew = $batch->status;
                     $messages = 'Batches un-archived successfully.';
                 }
                 
                 
-                $batch->status_final = $statusToUpdate;
+                $batch->status_final = $statusToUpdateNew;
                 $batch->save();
             }
         }
