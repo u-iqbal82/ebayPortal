@@ -34,7 +34,7 @@ Route::group(['middleware' => ['auth']], function () {
     $this->get('dashboard/{flag?}', 'DashboardController@showDashboard')->name('dashboard');
     
     $this->get('/', 'DashboardController@showDashboard');
-    $this->get('/{flag?}', 'DashboardController@showDashboard');
+    //$this->get('/{flag?}', 'DashboardController@showDashboard');
     
     
     
