@@ -252,7 +252,7 @@
                             <a class="btn btn-sm btn-info" href="/batch/edit/{{ $batch->id }}" role="button">Change Name</a>
                             @endpermission
                             @permission('delete-batch')
-                            <a class="btn btn-sm btn-danger" href="/batch/delete/{{ $batch->id }}" role="button">Delete</a>
+                            <a class="btn btn-delete btn-sm btn-danger" href="/batch/delete/{{ $batch->id }}" role="button">Delete</a>
                             @endpermission
                     </tr>
                     @endforeach
@@ -293,5 +293,14 @@
             "lengthMenu": [[50, 100, 150, -1], [50, 100, 150, "All"]],
             "columnDefs": [{ "orderable": false, "targets": 0 }]
         } );
+        
+        $('.btn-delete').on('click', function(){
+            var r = confirm("Are you sure you want to delete the batch?");
+            if (r == true) {
+                return true;
+            } else {
+                return false;
+            } 
+        })
     </script>
 @endsection

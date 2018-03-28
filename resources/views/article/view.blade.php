@@ -130,7 +130,7 @@
                     
                     @if (Auth::user()->hasRole(['admin', 'super-admin']))
                         <div class="col-md-12">
-                            <button class="btn btn-primary pull-left btn-block" type="submit">Save Article</button>
+                            <button class="btn-save btn btn-primary pull-left btn-block" type="submit">Save Article</button>
                         </div>
                         @if ($article->status == 'Saved' || $article->status == 'EditsSaved')
                             <div class="col-md-12">    
@@ -205,7 +205,7 @@
             <input type="hidden" name="c_article_status" id="c_article_status" value="{{ $article->status }}" />
               
             <div class="form-group">
-                <textarea name='article_comment' id="article_comment" class="form-control" rows="10"></textarea>
+                <textarea name='article_comment' id="article_comment" class="form-control article_comment" rows="10"></textarea>
             </div>
             </form>
       </div>
@@ -220,6 +220,8 @@
 @section('footerjs')
     <script type="text/javascript" src="{{ URL::asset('js/tinymce/js/tinymce/tinymce.min.js') }}"></script>
     <script type="text/javascript">
+        saved = true; // initially, it is saved (no action has been done)
+    
         tinymce.init({
           selector: 'textarea',
           browser_spellcheck: true,
@@ -231,6 +233,9 @@
                    $('.btn-completed').addClass('btn-block');
                    $('.btn-completed').atr('disbaled', 'disabled');
                });
+               ed.on("keyup", function(){
+                    saved = false;
+                });
            },
           plugins: [
             'link preview anchor',
@@ -238,6 +243,12 @@
             'paste code visualchars spellchecker wordcount'
           ],
           toolbar: 'undo redo | styleselect | link | spellchecker | pastetext | searchreplace | removeformat',
+        });
+        
+        $('.btn-save').on('click', function(){
+            window.onbeforeunload = null;
+            saved = true;
+            $('#form_article').submit();
         });
         
         $('#mark_as_completed').on('click', function(){
@@ -270,6 +281,13 @@
                 $('#form-add-comment').submit();    
             //}
         });
+        
+        window.onbeforeunload = confirmExit;
+        function confirmExit() {
+            if (!saved) {
+                return "You did not save, do you want to do it now?";
+            }
+        }
     </script>
 @endsection
 
