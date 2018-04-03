@@ -28,7 +28,8 @@
                     
                     @php
                         $url = $article->article_url;
-                        if (stripos($url, 'http://') === false)
+    
+                        if (stripos($url, 'http://') === false && stripos($url, 'https://') === false)
                         {
                             $url = 'http://' . $url;
                         }
