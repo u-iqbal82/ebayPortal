@@ -240,7 +240,7 @@
                             
                            
                                 @permission('download-batch')
-                                    <a class="btn btn-sm btn-success" href="batch/download/{{ $batch->id }}" role="button">Download</a>
+                                    <a class="btn btn-sm btn-success" href="/batch/download/{{ $batch->id }}" role="button">Download</a>
                                 @endpermission
                            
                             
