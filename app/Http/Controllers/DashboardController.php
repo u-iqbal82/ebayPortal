@@ -47,7 +47,25 @@ class DashboardController extends Controller
             
             $batchess = array_unique($batchess);
             
-            $batches = Batch::find($batchess);
+            //$batches = Batch::find($batchess);
+            
+            foreach($batchess  as $b)
+            {
+                if ($flag == 'archived')
+                {
+                    $checkForBatch = Batch::where('id', $b)->where('status_final', '=', 'Archived')->orderBy('id', 'desc')->get();
+                }
+                else
+                {
+                    $checkForBatch = Batch::where('id', $b)->where('status_final', '<>', 'Archived')->orderBy('id', 'desc')->get();
+                }
+            
+                if (isset($checkForBatch[0]))
+                {
+                    $batches[] = $checkForBatch[0];    
+                }
+            }
+            
             
             
             //dd($batches);

@@ -104,7 +104,7 @@
                 {{ csrf_field() }}
                 <table class="table table-condensed table-striped" id="BatchTable">
                     <thead>
-                        @if (Auth::user()->hasRole(['admin', 'super-admin']))
+                        
                         <tr>
                             <th colspan="14" class="text-right no-padding-lr">
                                 @if ($flag == 'false')
@@ -112,6 +112,8 @@
                                 @else
                                     <a class="btn btn-primary" href="/dashboard/" role="button">Show Current Batches</a>
                                 @endif
+                                
+                                @if (Auth::user()->hasRole(['admin', 'super-admin']))
                                 <div class="form-group">
                                     <select class="form-control" name="action_select" id="action_select">
                                         <option value="false"> -- Please select action-- </option>
@@ -124,9 +126,10 @@
                                     </select>
                                 </div>
                                 <button type="submit" class="btn btn-primary">Submit</button>
+                                @endif
                             </th>
                         </tr>   
-                        @endif
+                        
                         <tr>
                             <th><input type="checkbox" name="select_all_art" id="select_all_art" style="padding:0" /></th>
                             <th>#</th>
